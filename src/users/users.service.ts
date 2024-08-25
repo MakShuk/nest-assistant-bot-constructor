@@ -1,50 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  /* async updateUser(id: number, data: UpdateUserDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data,
-    });
-    return { email: updatedUser.email, username: updatedUser.username };
+  async getAllUsers() {
+    return await this.prisma.user.findMany();
   }
 
-  async delete(id: number) {
+  async getUserById(id: string) {
     const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return this.prisma.user.delete({
-      where: { id },
-    });
-  }
-
-  async findOne(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      select: {
-        username: true,
-        email: true,
-        createdAt: true,
+      where: {
+        telegramUserId: id,
       },
     });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
     return user;
-  } */
+  }
+
+  async createUser(username: string, telegramUserId: string) {
+    return await this.prisma.user.create({
+      data: {
+        username: username,
+        telegramUserId: telegramUserId,
+      },
+    });
+  }
+
+  async deleteUser(id: string) {
+    return await this.prisma.user.delete({
+      where: {
+        telegramUserId: id,
+      },
+    });
+  }
 }

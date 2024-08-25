@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-
 import { OpenAIModule } from './configs/openai.config';
 import { ThreadsModule } from './threads/threads.module';
 import { AssistantsModule } from './assistants/assistants.module';
 import { VectorStoresModule } from './vector-stores/vector-stores.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +15,7 @@ import { VectorStoresModule } from './vector-stores/vector-stores.module';
     ThreadsModule,
     AssistantsModule,
     VectorStoresModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
