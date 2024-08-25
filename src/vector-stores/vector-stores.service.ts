@@ -2,11 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 
 @Injectable()
-export class FilesService {
+export class VectorStoresService {
   constructor(@Inject('OPENAI_INSTANCE') private readonly openai: OpenAI) {}
 
-  async getAllFile() {
-    const files = await this.openai.files.list();
-    console.log(files);
+  getAllVectorStores() {
+    return this.openai.beta.vectorStores.list();
   }
 }

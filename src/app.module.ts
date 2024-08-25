@@ -4,14 +4,18 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { FilesModule } from './files/files.module';
 import { OpenAIModule } from './configs/openai.config';
-import { UsersModule } from './users/users.module';
+import { ThreadsModule } from './threads/threads.module';
+import { AssistantsModule } from './assistants/assistants.module';
+import { VectorStoresModule } from './vector-stores/vector-stores.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     OpenAIModule.forRootAsync(),
     FilesModule,
-    UsersModule,
+    ThreadsModule,
+    AssistantsModule,
+    VectorStoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],

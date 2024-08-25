@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+/* import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { UpdateUserDto } from './users.dto';
 
@@ -49,3 +49,4 @@ export class UsersService {
     return user;
   }
 }
+ */
