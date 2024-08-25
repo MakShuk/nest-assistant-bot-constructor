@@ -9,11 +9,11 @@ interface AssistantParams {
 interface Message {
   content: string;
 }
-
+/* 
 interface File {
   path: string;
   id: string;
-}
+} */
 
 @Controller('openai-assistant')
 export class OpenaiAssistantController {
@@ -48,7 +48,7 @@ export class OpenaiAssistantController {
     return this.openaiAssistantService.resetThread();
   }
 
-/*   @Post('upload-file')
+  /*   @Post('upload-file')
   fileUploads(
     @Body()
     file: File,

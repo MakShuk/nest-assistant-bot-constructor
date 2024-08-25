@@ -3,9 +3,11 @@ import OpenAI from 'openai';
 
 import { Thread } from 'openai/resources/beta/threads/threads';
 import { promises as fsPromises } from 'fs';
-import * as fs from 'fs';
 import { LoggerService } from 'src/services/logger.service';
-import { Assistant, AssistantCreateParams } from 'openai/resources/beta/assistants';
+import {
+  Assistant,
+  AssistantCreateParams,
+} from 'openai/resources/beta/assistants';
 
 enum ModelType {
   GPT_3_5_TURBO_0125 = 'gpt-3.5-turbo-0125',
@@ -107,7 +109,7 @@ export class OpenaiAssistantService implements OnModuleInit {
     }
   }
 
-/*   async uploadFile(filePath: string, assistantId: string) {
+  /*   async uploadFile(filePath: string, assistantId: string) {
     try {
       const data = await this.getAssistantConfig();
       const assistantDetails = data.filter(
@@ -170,7 +172,7 @@ export class OpenaiAssistantService implements OnModuleInit {
   private getAssistantParams(
     assistantParams: Partial<AssistantCreateParams>,
   ): AssistantCreateParams {
-    const { name, instructions, tools, model } = assistantParams;
+    const { name, instructions, model } = assistantParams;
     return {
       name: name || 'Murder mystery helper',
       instructions:
