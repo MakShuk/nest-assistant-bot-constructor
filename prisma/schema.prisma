@@ -11,3 +11,44 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model User {
+  telegramUserId String      @id @map("telegram_user_id")
+  username       String      @unique
+  createdAt      DateTime    @default(now()) @map("created_at")
+  assistants     Assistant[]
+  vectorStores   VectorStore[]
+  threads        Thread[]
+
+  @@map("users")
+}
+
+model Assistant {
+  openaiAssistantId String       @id @map("openai_assistant_id")
+  user              User         @relation(fields: [telegramUserId], references: [telegramUserId])
+  telegramUserId    String       @map("telegram_user_id")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  vectorStores      VectorStore[]
+
+  @@map("assistants")
+}
+
+model VectorStore {
+  openaiVectorStoreId String    @id @map("openai_vector_store_id")
+  user                User      @relation(fields: [telegramUserId], references: [telegramUserId])
+  telegramUserId      String    @map("telegram_user_id")
+  assistant           Assistant @relation(fields: [openaiAssistantId], references: [openaiAssistantId])
+  openaiAssistantId   String    @map("openai_assistant_id")
+  createdAt           DateTime  @default(now()) @map("created_at")
+
+  @@map("vector_store")
+}
+
+model Thread {
+  openaiThreadId String   @id @map("openai_thread_id")
+  user           User     @relation(fields: [telegramUserId], references: [telegramUserId])
+  telegramUserId String   @map("telegram_user_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("thread")
+}

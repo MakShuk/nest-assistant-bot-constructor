@@ -4,7 +4,8 @@ import OpenAI from 'openai';
 @Injectable()
 export class AssistantsService {
   constructor(@Inject('OPENAI_INSTANCE') private readonly openai: OpenAI) {}
-  getAllAssistant() {
-    return this.openai.beta.assistants.list();
+  async getAllAssistant() {
+    const { data } = await this.openai.beta.assistants.list();
+    return data;
   }
 }

@@ -1,12 +1,11 @@
-/* import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma/prisma.service';
-import { UpdateUserDto } from './users.dto';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async updateUser(id: number, data: UpdateUserDto) {
+  /* async updateUser(id: number, data: UpdateUserDto) {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -47,6 +46,5 @@ export class UsersService {
     }
 
     return user;
-  }
+  } */
 }
- */
