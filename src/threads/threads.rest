@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:3003
+
+### 
+GET {{baseUrl}}/threads/3243223dfAfd_Svd!
+
+###
+POST {{baseUrl}}/threads/3243223dfAfd_Svd!
+
+###
+GET {{baseUrl}}/threads/thread/thread_9SxoEMY9BK6cMmmPovBqxQSQ
+
+###
+GET {{baseUrl}}/threads/3243223dfAfd_Svd!
+
+###
+DELETE {{baseUrl}}/threads/thread_9SxoEMY9BK6cMmmPovBqxQSQ

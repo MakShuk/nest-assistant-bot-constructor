@@ -1,4 +1,20 @@
 @baseUrl = http://localhost:3003
 
 ### 
-{{baseUrl}}/assistants
+GET {{baseUrl}}/assistants/3243223dfAfd_Svd!
+
+### 
+GET {{baseUrl}}/assistants/assistant/asst_lhGVeKt3ZCm3kUZmC3Ap05JG
+
+### 
+POST {{baseUrl}}/assistants/
+content-type: application/json
+
+{
+ "userId": "3243223dfAfd_Svd!", "assistantName": "Test1", "instructions": "Best code"
+}
+
+###
+DELETE  {{baseUrl}}/assistants/asst_FKJKKNwnCkbruGbe2Sr2RGaZ
+
+

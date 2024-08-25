@@ -1,0 +1,49 @@
+/**
+ * This code snippet demonstrates the usage of Prisma JS.
+ * Prisma is an open-source database toolkit that provides an Object-Relational Mapping (ORM) layer for Node.js applications.
+ * It allows developers to interact with databases using a type-safe and auto-generated query builder.
+ * Prisma supports various databases such as PostgreSQL, MySQL, SQLite, and SQL Server.
+ * 
+ * In this code, we can see the initialization of a Prisma client and the usage of the client to perform database operations.
+ * The Prisma client is generated based on the database schema defined in the Prisma schema file.
+ * 
+ * Prisma provides a fluent API for querying, creating, updating, and deleting data from the database.
+ * It also supports advanced features like pagination, filtering, sorting, and aggregations.
+ * 
+ * To use Prisma, you need to install the Prisma CLI and generate the Prisma client based on your database schema.
+ * You can define your database schema in the Prisma schema file using the Prisma schema language.
+ * 
+ * For more information on Prisma, you can refer to the official documentation: https://www.prisma.io/docs/
+ */
+
+// FILEPATH: app.js
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
+
+async function getUsers() {
+    const users = await prisma.user.findMany();
+    return users;
+}
+
+async function createUser(data) {
+    const user = await prisma.user.create({ data });
+    return user;
+}
+
+async function updateUser(id, data) {
+    const user = await prisma.user.update({ where: { id }, data });
+    return user;
+}
+
+async function deleteUser(id) {
+    const user = await prisma.user.delete({ where: { id } });
+    return user;
+}
+
+module.exports = {
+    getUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+};

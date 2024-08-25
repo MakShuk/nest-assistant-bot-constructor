@@ -37,8 +37,8 @@ model VectorStore {
   openaiVectorStoreId String    @id @map("openai_vector_store_id")
   user                User      @relation(fields: [telegramUserId], references: [telegramUserId])
   telegramUserId      String    @map("telegram_user_id")
-  assistant           Assistant @relation(fields: [openaiAssistantId], references: [openaiAssistantId])
-  openaiAssistantId   String    @map("openai_assistant_id")
+  assistant           Assistant? @relation(fields: [openaiAssistantId], references: [openaiAssistantId])
+  openaiAssistantId   String?    @map("openai_assistant_id")
   createdAt           DateTime  @default(now()) @map("created_at")
 
   @@map("vector_store")
