@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:3003
+
+POST {{baseUrl}}/init
+content-type: application/json
+
+{ "userId": "user123", "assistantName": "AssistantName", "instructions": "Instructions for the assistant" }
+
+###
+GET {{baseUrl}}/user123
+
+###
+POST {{baseUrl}}/user123/This%20is%20a%20test%20message

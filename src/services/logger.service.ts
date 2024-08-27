@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger, ILogObj } from 'tslog';
 
-1
 @Injectable()
 export class LoggerService {
   private logger: Logger<ILogObj>;

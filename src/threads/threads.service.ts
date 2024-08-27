@@ -10,6 +10,14 @@ export class ThreadsService {
   ) {}
 
   async createThread(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramUserId: userId },
+    });
+
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+
     const thread = await this.openai.beta.threads.create({
       messages: [],
     });
@@ -42,5 +50,20 @@ export class ThreadsService {
       },
     });
     return `Thread ${threadAi.id} deleted from OpenAI and ${threadDB.openaiThreadId} deleted from DB`;
+  }
+
+  async addMessageToThread(userId: string, message: string) {
+    const thread = await this.prisma.thread.findFirst({
+      where: {
+        telegramUserId: userId,
+      },
+    });
+    return await this.openai.beta.threads.messages.create(
+      thread.openaiThreadId,
+      {
+        role: 'user',
+        content: message,
+      },
+    );
   }
 }

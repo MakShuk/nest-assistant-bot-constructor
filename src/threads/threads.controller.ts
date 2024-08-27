@@ -24,4 +24,12 @@ export class ThreadsController {
   async deleteThread(@Param('threadId') threadId: string) {
     return await this.threadsService.deleteThread(threadId);
   }
+
+  @Post(`:userId/:message`)
+  async addMessageToThread(
+    @Param('userId') userId: string,
+    @Param('message') message: string,
+  ) {
+    return await this.threadsService.addMessageToThread(userId, message);
+  }
 }

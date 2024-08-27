@@ -4,7 +4,7 @@ POST {{baseUrl}}/users
 content-type: application/json
 
 {
- "telegramUserId": "3243223dfAfd_Svd!", "username": "user6"
+ "telegramUserId": "305343617", "username": "maks"
 }
 
 ### Get All Users
@@ -16,3 +16,5 @@ GET {{baseUrl}}/users/3243223dfAfd_Svd!
 ###Delete User 
 DELETE {{baseUrl}}/users/3243223dfAfd_Svd!
 
+###
+GET {{baseUrl}}/users/all/user123

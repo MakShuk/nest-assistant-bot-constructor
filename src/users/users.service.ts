@@ -23,6 +23,15 @@ export class UsersService {
   }
 
   async createUser(username: string, telegramUserId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        telegramUserId: telegramUserId,
+      },
+    });
+
+    if (user) {
+      throw new Error('User already exists');
+    }
     return await this.prisma.user.create({
       data: {
         username: username,
@@ -37,5 +46,31 @@ export class UsersService {
         telegramUserId: id,
       },
     });
+  }
+
+  async getLastRecordsByUserId(telegramUserId: string) {
+    const [lastAssistant, lastVectorStore, lastThread] = await Promise.all([
+      this.prisma.assistant.findFirst({
+        where: { telegramUserId },
+        orderBy: { createdAt: 'desc' },
+        select: { openaiAssistantId: true },
+      }),
+      this.prisma.vectorStore.findFirst({
+        where: { telegramUserId },
+        orderBy: { createdAt: 'desc' },
+        select: { openaiVectorStoreId: true },
+      }),
+      this.prisma.thread.findFirst({
+        where: { telegramUserId },
+        orderBy: { createdAt: 'desc' },
+        select: { openaiThreadId: true },
+      }),
+    ]);
+
+    return {
+      lastAssistantId: lastAssistant?.openaiAssistantId || null,
+      lastVectorStoreId: lastVectorStore?.openaiVectorStoreId || null,
+      lastThreadId: lastThread?.openaiThreadId || null,
+    };
   }
 }

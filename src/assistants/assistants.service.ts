@@ -31,7 +31,7 @@ export class AssistantsService {
       name: `${assistantName} - ${userId}-tg-bot`,
       instructions: instructions,
       tools: [{ type: 'file_search' }],
-      model: 'gpt-4o',
+      model: process.env.OPENAI_MODEL,
     });
     return this.prisma.assistant.create({
       data: {

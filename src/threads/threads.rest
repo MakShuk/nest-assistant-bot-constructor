@@ -14,3 +14,8 @@ GET {{baseUrl}}/threads/3243223dfAfd_Svd!
 
 ###
 DELETE {{baseUrl}}/threads/thread_9SxoEMY9BK6cMmmPovBqxQSQ
+
+###
+POST {{baseUrl}}/threads/user123/Раскажи%20анегдот%21
+
+

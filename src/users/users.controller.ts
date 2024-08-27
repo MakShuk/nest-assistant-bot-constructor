@@ -26,4 +26,11 @@ export class UsersController {
   async deleteUser(@Param('userId') userId: string) {
     return this.usersService.deleteUser(userId);
   }
+
+  @Get('all/:telegramUserId')
+  async getAllUsersByTelegramUserId(
+    @Param('telegramUserId') telegramUserId: string,
+  ) {
+    return await this.usersService.getLastRecordsByUserId(telegramUserId);
+  }
 }
