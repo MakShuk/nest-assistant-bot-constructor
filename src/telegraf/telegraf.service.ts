@@ -14,4 +14,8 @@ export class TelegrafService {
   textMessage(callback: (ctx: Context) => void) {
     this.bot.on(message('text'), callback);
   }
+
+  async voiceMessage(callback: (ctx: Context) => void) {
+    this.bot.on(message('voice'), callback);
+  }
 }

@@ -12,6 +12,7 @@ import { TelegrafService } from './telegraf/telegraf.service';
 import { CommandsService } from './services/commands.service';
 import { AssistantsService } from './assistants/assistants.service';
 import { PrismaService } from './services/prisma.service';
+import { OggConverter } from './services/ogg-converter.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PrismaService } from './services/prisma.service';
     AssistantsService,
     TelegrafService,
     PrismaService,
+    OggConverter,
   ],
 })
 export class AppModule {}

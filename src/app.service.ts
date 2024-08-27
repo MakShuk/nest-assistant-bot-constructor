@@ -14,6 +14,7 @@ export class AppService implements OnModuleInit {
     this.telegraf.createCommand('start', this.commands.start);
     this.telegraf.createCommand('reset', this.commands.reset);
     this.telegraf.textMessage(this.commands.streamText);
+    this.telegraf.voiceMessage(this.commands.voiceMessage);
 
     /*   async init(userId: string, assistantName: string, instructions: string) {
       const newUser = await this.usersService.createUser(
