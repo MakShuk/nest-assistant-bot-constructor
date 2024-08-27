@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { OpenAIModule } from './configs/openai.config';
@@ -7,11 +6,12 @@ import { ThreadsModule } from './threads/threads.module';
 import { AssistantsModule } from './assistants/assistants.module';
 import { VectorStoresModule } from './vector-stores/vector-stores.module';
 import { UsersModule } from './users/users.module';
-import { UsersService } from './users/users.service';
-import { ThreadsService } from './threads/threads.service';
+import { TelegramModule } from './configs/telegram.config';
+import { TelegrafModule } from './telegraf/telegraf.module';
+import { TelegrafService } from './telegraf/telegraf.service';
+import { CommandsService } from './services/commands.service';
 import { AssistantsService } from './assistants/assistants.service';
 import { PrismaService } from './services/prisma.service';
-import { TelegramModule } from './configs/telegram.config';
 
 @Module({
   imports: [
@@ -22,13 +22,15 @@ import { TelegramModule } from './configs/telegram.config';
     AssistantsModule,
     VectorStoresModule,
     UsersModule,
+    TelegrafModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
+    TelegrafService,
+    CommandsService,
     AppService,
-    UsersService,
-    ThreadsService,
     AssistantsService,
+    TelegrafService,
     PrismaService,
   ],
 })

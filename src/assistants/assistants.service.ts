@@ -51,4 +51,16 @@ export class AssistantsService {
 
     return `Assistant ${assistantAi.id} deleted from OpenAI and ${assistantDB.openaiAssistantId} deleted from DB`;
   }
+
+  async getLastAssistantByUserId(userId: string) {
+    const assistant = await this.prisma.assistant.findFirst({
+      where: {
+        telegramUserId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return assistant;
+  }
 }

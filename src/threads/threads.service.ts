@@ -52,18 +52,35 @@ export class ThreadsService {
     return `Thread ${threadAi.id} deleted from OpenAI and ${threadDB.openaiThreadId} deleted from DB`;
   }
 
-  async addMessageToThread(userId: string, message: string) {
+  async addMessageToThread(openaiThreadId: string, message: string) {
+    return await this.openai.beta.threads.messages.create(openaiThreadId, {
+      role: 'user',
+      content: message,
+    });
+  }
+
+  async getLastThreadByUserId(userId: string) {
     const thread = await this.prisma.thread.findFirst({
       where: {
         telegramUserId: userId,
       },
-    });
-    return await this.openai.beta.threads.messages.create(
-      thread.openaiThreadId,
-      {
-        role: 'user',
-        content: message,
+      orderBy: {
+        createdAt: 'desc',
       },
-    );
+    });
+    return thread;
+  }
+
+  async resetThread(userId: string) {
+    const thread = await this.getLastThreadByUserId(userId);
+    await this.openai.beta.threads.del(thread.openaiThreadId);
+    await this.prisma.thread.delete({
+      where: {
+        openaiThreadId: thread.openaiThreadId,
+      },
+    });
+    await this.createThread(userId);
+    console.log(`Thread for user ${userId} reset`);
+    return `Thread for user ${userId} reset`;
   }
 }

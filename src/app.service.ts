@@ -1,51 +1,46 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { UsersService } from './users/users.service';
-import { ThreadsService } from './threads/threads.service';
-import { AssistantsService } from './assistants/assistants.service';
-import OpenAI from 'openai';
-import { Context, Telegraf } from 'telegraf';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { TelegrafService } from './telegraf/telegraf.service';
+import { CommandsService } from './services/commands.service';
 
 @Injectable()
-export class AppService {
+export class AppService implements OnModuleInit {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly threadsService: ThreadsService,
-    private readonly assistantsService: AssistantsService,
-    @Inject('OPENAI_INSTANCE') private readonly openai: OpenAI,
-    @Inject('TELEGRAM_BOT_INSTANCE') private readonly bot: Telegraf<Context>,
+    private readonly telegraf: TelegrafService,
+    private readonly commands: CommandsService,
   ) {}
 
-  async init(userId: string, assistantName: string, instructions: string) {
-    const newUser = await this.usersService.createUser(
-      `user-${userId}`,
-      userId,
-    );
+  onModuleInit() {
+    console.log('The module has been initialized.');
+    this.telegraf.createCommand('start', this.commands.start);
+    this.telegraf.createCommand('reset', this.commands.reset);
+    this.telegraf.textMessage(this.commands.streamText);
 
-    const thread = await this.threadsService.createThread(userId);
-    const assistant = await this.assistantsService.createAssistant(
-      assistantName,
-      userId,
-      instructions,
-    );
-    return { thread, assistant, newUser };
-  }
-
-  async stream(userId: string) {
-    const { lastAssistantId, lastThreadId } =
-      await this.usersService.getLastRecordsByUserId(userId);
-
-    const run = this.openai.beta.threads.runs
-      .stream(lastAssistantId, {
-        assistant_id: lastThreadId,
-      })
-      .on('textCreated', () => process.stdout.write('\nassistant > '))
-      .on('textDelta', (textDelta) => process.stdout.write(textDelta.value));
-    console.log('run', run);
-  }
-
-  async sendMessage() {
-    this.bot.start((ctx) => {
-      ctx.reply('Welcome to the bot');
-    });
+    /*   async init(userId: string, assistantName: string, instructions: string) {
+      const newUser = await this.usersService.createUser(
+        `user-${userId}`,
+        userId,
+      );
+  
+      const thread = await this.threadsService.createThread(userId);
+      const assistant = await this.assistantsService.createAssistant(
+        assistantName,
+        userId,
+        instructions,
+      );
+      return { thread, assistant, newUser };
+    }
+  
+    async stream(userId: string) {
+      const { lastAssistantId, lastThreadId } =
+        await this.usersService.getLastRecordsByUserId(userId);
+  
+      const run = this.openai.beta.threads.runs
+        .stream(lastAssistantId, {
+          assistant_id: lastThreadId,
+        })
+        .on('textCreated', () => process.stdout.write('\nassistant > '))
+        .on('textDelta', (textDelta) => process.stdout.write(textDelta.value));
+      console.log('run', run);
+    } */
   }
 }

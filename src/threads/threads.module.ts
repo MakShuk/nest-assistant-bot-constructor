@@ -6,5 +6,6 @@ import { PrismaService } from 'src/services/prisma.service';
 @Module({
   controllers: [ThreadsController],
   providers: [ThreadsService, PrismaService],
+  exports: [ThreadsService],
 })
 export class ThreadsModule {}

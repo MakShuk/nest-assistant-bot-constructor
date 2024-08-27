@@ -4,7 +4,7 @@
 GET {{baseUrl}}/threads/3243223dfAfd_Svd!
 
 ###
-POST {{baseUrl}}/threads/3243223dfAfd_Svd!
+POST {{baseUrl}}/threads/305343617
 
 ###
 GET {{baseUrl}}/threads/thread/thread_9SxoEMY9BK6cMmmPovBqxQSQ
