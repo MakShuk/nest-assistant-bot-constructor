@@ -14,6 +14,9 @@ import { AssistantsService } from './assistants/assistants.service';
 import { PrismaService } from './services/prisma.service';
 import { OggConverter } from './services/ogg-converter.service';
 import { VectorStoresService } from './vector-stores/vector-stores.service';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guard/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,9 +28,17 @@ import { VectorStoresService } from './vector-stores/vector-stores.service';
     VectorStoresModule,
     UsersModule,
     TelegrafModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+    }),
   ],
   controllers: [],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
     TelegrafService,
     CommandsService,
     AppService,
