@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
-import * as path from 'path';
 import * as fs from 'fs';
 import { PrismaService } from 'src/services/prisma.service';
 
@@ -15,27 +14,17 @@ export class VectorStoresService {
     return await this.openai.beta.vectorStores.list();
   }
 
-  async getAllUserVectorStores(userId: string) {
-    return await this.prisma.vectorStore.findMany({
-      where: {
-        telegramUserId: userId,
-      },
-    });
+  async getOpenaiVectorStoreById(vectorStoreId: string) {
+    return await this.openai.beta.vectorStores.files.list(vectorStoreId);
   }
 
-  async createVectorStore(
-    vectorStoreName: string,
-    userId: string,
-    filePath: string[],
-  ) {
-    const basePath = path.resolve(__dirname, '..', '../temp/');
-
+  async createVectorStore(filePath: string[]) {
     const fileStreams = filePath.map((fileName) =>
-      fs.createReadStream(path.join(basePath, fileName)),
+      fs.createReadStream(fileName),
     );
 
     const vectorStore = await this.openai.beta.vectorStores.create({
-      name: `${vectorStoreName} - ${userId}-tg-bot`,
+      name: `${process.env.PROJECT_NAME}_TG_BOT`,
     });
 
     const vectorStoresStatus =
@@ -46,16 +35,22 @@ export class VectorStoresService {
         },
       );
 
-    const vectorStoresDB = await this.prisma.vectorStore.create({
+    await this.prisma.vectorStore.create({
       data: {
         openaiVectorStoreId: vectorStoresStatus.vector_store_id,
-        telegramUserId: userId,
       },
     });
-    return `Vector store ${vectorStoresDB.openaiVectorStoreId} created for user ${vectorStoresDB.telegramUserId}`;
+    return vectorStore.id;
   }
 
   async deleteVectorStore(vectorStoreId: string) {
+    const storeFiles =
+      await this.openai.beta.vectorStores.files.list(vectorStoreId);
+
+    storeFiles.data.forEach(async (file) => {
+      await this.openai.files.del(file.id);
+    });
+
     const vectorStoreAi =
       await this.openai.beta.vectorStores.del(vectorStoreId);
 
@@ -66,5 +61,19 @@ export class VectorStoresService {
     });
 
     return `Vector store ${vectorStoreAi.id} deleted from OpenAI and ${vectorStoreDB.openaiVectorStoreId} deleted from DB`;
+  }
+
+  async getLastVectorStore() {
+    return await this.prisma.vectorStore.findFirst({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async addFileToVectorStore(vectorStoreId: string, filePath: string) {
+    const updateStore = await this.openai.beta.vectorStores.files.upload(
+      vectorStoreId,
+      fs.createReadStream(filePath),
+    );
+    return updateStore;
   }
 }

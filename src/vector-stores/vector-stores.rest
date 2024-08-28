@@ -4,18 +4,18 @@
 GET {{baseUrl}}/vector-stores
 
 ### 
-GET {{baseUrl}}/vector-stores/3243223dfAfd_Svd!
-
-### 
 POST {{baseUrl}}/vector-stores
 content-type: application/json
 
 {
-  "vectorStoreName": "MY_VS",
-  "userId": "3243223dfAfd_Svd!",
   "filePath": ["file_1.txt", "file_2.txt"]
 }
 
 ###
 DELETE  {{baseUrl}}/vector-stores/vs_bSnC0Wf8gsgXp9fxNve8NrX3
 
+###
+PATCH {{baseUrl}}/vector-stores/ 
+content-type: application/json
+
+{ "vectorStoreId": "vs_jkyTNvkGGmCIsh4RaJw8QMUa", "filePath": "C:/development/NestJS/nest-assistant-bot-constructor/tsconfig.json" }

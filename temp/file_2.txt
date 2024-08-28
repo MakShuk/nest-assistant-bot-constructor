@@ -1,9 +1,0 @@
-/**
- * This function takes in two numbers and returns their sum.
- * @param {number} num1 - The first number.
- * @param {number} num2 - The second number.
- * @returns {number} The sum of the two numbers.
- */
-function addNumbers(num1, num2) {
-    return num1 + num2;
-}

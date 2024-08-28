@@ -21,13 +21,13 @@ export class ThreadsService {
     const thread = await this.openai.beta.threads.create({
       messages: [],
     });
-    const threadDb = await this.prisma.thread.create({
+    await this.prisma.thread.create({
       data: {
         openaiThreadId: thread.id,
         telegramUserId: userId,
       },
     });
-    return `Thread ${threadDb.openaiThreadId} created for user ${threadDb.telegramUserId}`;
+    return thread.id;
   }
 
   async getThreadById(threadId: string) {
@@ -59,6 +59,26 @@ export class ThreadsService {
     });
   }
 
+  async addImageMessagesToThread(
+    openaiThreadId: string,
+    message: string,
+    imageUrl: string,
+  ) {
+    return await this.openai.beta.threads.messages.create(openaiThreadId, {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: message,
+        },
+        {
+          type: 'image_url',
+          image_url: { url: imageUrl },
+        },
+      ],
+    });
+  }
+
   async getLastThreadByUserId(userId: string) {
     const thread = await this.prisma.thread.findFirst({
       where: {
@@ -80,7 +100,6 @@ export class ThreadsService {
       },
     });
     await this.createThread(userId);
-    console.log(`Thread for user ${userId} reset`);
     return `Thread for user ${userId} reset`;
   }
 }

@@ -18,4 +18,19 @@ export class TelegrafService {
   async voiceMessage(callback: (ctx: Context) => void) {
     this.bot.on(message('voice'), callback);
   }
+
+  imageMessage(callback: (ctx: Context) => void) {
+    this.bot.on(message('photo'), callback);
+  }
+
+  async fileMessage(callback: (ctx: Context) => void) {
+    this.bot.on(message('document'), callback);
+  }
+
+  async buttonAction(
+    action: string | RegExp,
+    callback: (ctx: Context) => void,
+  ) {
+    this.bot.action(action, callback);
+  }
 }

@@ -1,13 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { AssistantsService } from './assistants.service';
 
 @Controller('assistants')
 export class AssistantsController {
   constructor(private readonly assistantsService: AssistantsService) {}
 
-  @Get(':userId')
-  async getAllAssistant(@Param('userId') userId: string) {
-    return await this.assistantsService.getAllAssistantForUserId(userId);
+  @Get()
+  async getAllAssistant() {
+    return await this.assistantsService.getAllAssistants();
   }
 
   @Get('assistant/:assistantId')
@@ -24,10 +32,9 @@ export class AssistantsController {
       instructions: string;
     },
   ) {
-    const { userId, assistantName, instructions } = data;
+    const { assistantName, instructions } = data;
     return await this.assistantsService.createAssistant(
       assistantName,
-      userId,
       instructions,
     );
   }
@@ -35,5 +42,19 @@ export class AssistantsController {
   @Delete(':assistantId')
   async deleteAssistant(@Param('assistantId') assistantId: string) {
     return await this.assistantsService.deleteAssistant(assistantId);
+  }
+
+  @Patch()
+  async addVectorStoreToAssistant(
+    @Body()
+    data: {
+      vectorStoreId: string;
+      assistantId: string;
+    },
+  ) {
+    return await this.assistantsService.addVectorStoreToAssistant(
+      data.vectorStoreId,
+      data.assistantId,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ThreadsService } from './threads.service';
 
 @Controller('threads')
@@ -25,11 +25,26 @@ export class ThreadsController {
     return await this.threadsService.deleteThread(threadId);
   }
 
-  @Post(`:userId/:message`)
+  @Post(`add-image/:openaiThreadId`)
+  async addImageMessagesToThread(
+    @Param('openaiThreadId') openaiThreadId: string,
+    @Body() data: { message: string; imageUrl: string },
+  ) {
+    return await this.threadsService.addImageMessagesToThread(
+      openaiThreadId,
+      data.message,
+      data.imageUrl,
+    );
+  }
+
+  @Post(`:openaiThreadId/:message`)
   async addMessageToThread(
-    @Param('userId') userId: string,
+    @Param('openaiThreadId') openaiThreadId: string,
     @Param('message') message: string,
   ) {
-    return await this.threadsService.addMessageToThread(userId, message);
+    return await this.threadsService.addMessageToThread(
+      openaiThreadId,
+      message,
+    );
   }
 }

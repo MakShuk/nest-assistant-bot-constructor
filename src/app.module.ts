@@ -13,6 +13,7 @@ import { CommandsService } from './services/commands.service';
 import { AssistantsService } from './assistants/assistants.service';
 import { PrismaService } from './services/prisma.service';
 import { OggConverter } from './services/ogg-converter.service';
+import { VectorStoresService } from './vector-stores/vector-stores.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { OggConverter } from './services/ogg-converter.service';
     TelegrafService,
     PrismaService,
     OggConverter,
+    VectorStoresService,
   ],
 })
 export class AppModule {}

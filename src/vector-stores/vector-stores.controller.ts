@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { VectorStoresService } from './vector-stores.service';
 
 @Controller('vector-stores')
@@ -19,21 +27,26 @@ export class VectorStoresController {
       filePath: string[];
     },
   ) {
-    const { userId, vectorStoreName, filePath } = data;
-    return await this.vectorStoresService.createVectorStore(
-      vectorStoreName,
-      userId,
-      filePath,
-    );
-  }
-
-  @Get(':userId')
-  async getAllUserVectorStores(@Param('userId') userId: string) {
-    return await this.vectorStoresService.getAllUserVectorStores(userId);
+    const { filePath } = data;
+    return await this.vectorStoresService.createVectorStore(filePath);
   }
 
   @Delete(':vectorStoreId')
   async deleteVectorStore(@Param('vectorStoreId') vectorStoreId: string) {
     return await this.vectorStoresService.deleteVectorStore(vectorStoreId);
+  }
+
+  @Patch()
+  async getLastVectorStore(
+    @Body()
+    data: {
+      vectorStoreId: string;
+      filePath: string;
+    },
+  ) {
+    return await this.vectorStoresService.addFileToVectorStore(
+      data.vectorStoreId,
+      data.filePath,
+    );
   }
 }

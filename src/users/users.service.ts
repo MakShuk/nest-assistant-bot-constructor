@@ -49,16 +49,10 @@ export class UsersService {
   }
 
   async getLastRecordsByUserId(telegramUserId: string) {
-    const [lastAssistant, lastVectorStore, lastThread] = await Promise.all([
+    const [lastAssistant, lastThread] = await Promise.all([
       this.prisma.assistant.findFirst({
-        where: { telegramUserId },
         orderBy: { createdAt: 'desc' },
         select: { openaiAssistantId: true },
-      }),
-      this.prisma.vectorStore.findFirst({
-        where: { telegramUserId },
-        orderBy: { createdAt: 'desc' },
-        select: { openaiVectorStoreId: true },
       }),
       this.prisma.thread.findFirst({
         where: { telegramUserId },
@@ -69,7 +63,6 @@ export class UsersService {
 
     return {
       lastAssistantId: lastAssistant?.openaiAssistantId || null,
-      lastVectorStoreId: lastVectorStore?.openaiVectorStoreId || null,
       lastThreadId: lastThread?.openaiThreadId || null,
     };
   }

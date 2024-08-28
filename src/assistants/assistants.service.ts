@@ -9,12 +9,8 @@ export class AssistantsService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async getAllAssistantForUserId(userId: string) {
-    const assistants = await this.prisma.assistant.findMany({
-      where: {
-        telegramUserId: userId,
-      },
-    });
+  async getAllAssistants() {
+    const assistants = await this.prisma.assistant.findMany();
     return assistants;
   }
 
@@ -22,13 +18,9 @@ export class AssistantsService {
     return await this.openai.beta.assistants.retrieve(assistantId);
   }
 
-  async createAssistant(
-    assistantName: string,
-    userId: string,
-    instructions: string,
-  ) {
+  async createAssistant(assistantName: string, instructions: string) {
     const assistant = await this.openai.beta.assistants.create({
-      name: `${assistantName} - ${userId}-tg-bot`,
+      name: `${process.env.PROJECT_NAME}-${assistantName}_TG_BOT`,
       instructions: instructions,
       tools: [{ type: 'file_search' }],
       model: process.env.OPENAI_MODEL,
@@ -36,7 +28,6 @@ export class AssistantsService {
     return this.prisma.assistant.create({
       data: {
         openaiAssistantId: assistant.id,
-        telegramUserId: userId,
       },
     });
   }
@@ -52,15 +43,27 @@ export class AssistantsService {
     return `Assistant ${assistantAi.id} deleted from OpenAI and ${assistantDB.openaiAssistantId} deleted from DB`;
   }
 
-  async getLastAssistantByUserId(userId: string) {
-    const assistant = await this.prisma.assistant.findFirst({
-      where: {
-        telegramUserId: userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
+  async getLastAssistant() {
+    return await this.prisma.assistant.findFirst({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async addVectorStoreToAssistant(vectorStoreId: string, assistantId: string) {
+    await this.openai.beta.assistants.update(assistantId, {
+      tool_resources: {
+        file_search: {
+          vector_store_ids: [vectorStoreId],
+        },
       },
     });
-    return assistant;
+
+    await this.prisma.vectorStore.update({
+      where: { openaiVectorStoreId: vectorStoreId },
+      data: {
+        openaiAssistantId: assistantId,
+      },
+    });
+    return `Vector store ${vectorStoreId} added to assistant ${assistantId}`;
   }
 }
