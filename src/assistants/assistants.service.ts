@@ -18,16 +18,25 @@ export class AssistantsService {
     return await this.openai.beta.assistants.retrieve(assistantId);
   }
 
-  async createAssistant(assistantName: string, instructions: string) {
-    const assistant = await this.openai.beta.assistants.create({
-      name: `${process.env.PROJECT_NAME}-${assistantName}_TG_BOT`,
-      instructions: instructions,
-      tools: [{ type: 'file_search' }],
-      model: process.env.OPEN_AI_MODEL,
-    });
+  async createAssistant(
+    assistantName: string,
+    instructions: string,
+    assistantId?: string,
+  ) {
+    let createdAssistantId = assistantId;
+    if (!assistantId) {
+      const assistant = await this.openai.beta.assistants.create({
+        name: `${process.env.PROJECT_NAME}-${assistantName}_TG_BOT`,
+        instructions: instructions,
+        tools: [{ type: 'file_search' }],
+        model: process.env.OPEN_AI_MODEL,
+      });
+      createdAssistantId = assistant.id;
+    }
+
     return this.prisma.assistant.create({
       data: {
-        openaiAssistantId: assistant.id,
+        openaiAssistantId: createdAssistantId,
       },
     });
   }

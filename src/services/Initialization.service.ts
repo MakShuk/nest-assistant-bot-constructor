@@ -18,7 +18,7 @@ export class InitializationService {
         .toLocaleDateString('ru-RU')
         .slice(0, -5)
         .replace(/\./g, '.');
-
+      const assistantId = process.env.ASSISTANT_ID;
       const instruction = process.env.INSTRUCTION;
       const usersForSettings = process.env.USERS
         ? JSON.parse(process.env.USERS)
@@ -29,6 +29,16 @@ export class InitializationService {
         this.initializationUsers(usersForSettings);
 
         await this.assistant.createAssistant(formattedDate, instruction);
+
+        if (assistantId.length > 20) {
+          await this.assistant.createAssistant(
+            formattedDate,
+            instruction,
+            assistantId,
+          );
+        } else {
+          await this.assistant.createAssistant(formattedDate, instruction);
+        }
       }
     } catch (error) {
       console.error('Initialization error', error);
