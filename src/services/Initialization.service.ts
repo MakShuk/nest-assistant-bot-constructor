@@ -12,18 +12,26 @@ export class InitializationService {
   ) {}
 
   async on() {
-    const users = await this.user.getAllUsers();
-    const assistantName = process.env.PROJECT_NAME;
-    const instruction = process.env.INSTRUCTION;
-    const usersForSettings = process.env.USERS
-      ? JSON.parse(process.env.USERS)
-      : [];
+    try {
+      const users = await this.user.getAllUsers();
+      const formattedDate = new Date()
+        .toLocaleDateString('ru-RU')
+        .slice(0, -5)
+        .replace(/\./g, '.');
 
-    if (!users.length) {
-      console.log('Creating user');
-      this.initializationUsers(usersForSettings);
+      const instruction = process.env.INSTRUCTION;
+      const usersForSettings = process.env.USERS
+        ? JSON.parse(process.env.USERS)
+        : [];
 
-      await this.assistant.createAssistant(assistantName, instruction);
+      if (!users.length) {
+        console.log('Creating user');
+        this.initializationUsers(usersForSettings);
+
+        await this.assistant.createAssistant(formattedDate, instruction);
+      }
+    } catch (error) {
+      console.error('Initialization error', error);
     }
   }
 

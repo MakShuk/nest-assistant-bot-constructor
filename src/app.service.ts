@@ -25,7 +25,6 @@ export class AppService implements OnModuleInit {
     this.telegraf.voiceMessage(this.commands.voiceMessage);
     this.telegraf.imageMessage(this.commands.imageMessage);
     this.telegraf.fileMessage(fileCommand);
-
     this.telegraf.buttonAction(`store`, this.commands.deleteStore);
   }
 }

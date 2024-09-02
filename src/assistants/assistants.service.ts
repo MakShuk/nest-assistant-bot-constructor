@@ -23,7 +23,7 @@ export class AssistantsService {
       name: `${process.env.PROJECT_NAME}-${assistantName}_TG_BOT`,
       instructions: instructions,
       tools: [{ type: 'file_search' }],
-      model: process.env.OPENAI_MODEL,
+      model: process.env.OPEN_AI_MODEL,
     });
     return this.prisma.assistant.create({
       data: {

@@ -401,6 +401,13 @@ export class CommandsService {
       true,
     );
 
+    if (oldMessage.text === newMessage) {
+      console.log(
+        'New message content is identical to the current message content. No changes needed.',
+      );
+      return;
+    }
+
     if ('error' in editMessage) {
       editMessage = await this.editMessageText(ctx, oldMessage, newMessage);
     }
