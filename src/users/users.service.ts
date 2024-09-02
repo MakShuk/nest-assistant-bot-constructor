@@ -22,7 +22,7 @@ export class UsersService {
     return user;
   }
 
-  async createUser(username: string, telegramUserId: string) {
+  async createUser(telegramUserId: string, username?: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         telegramUserId: telegramUserId,

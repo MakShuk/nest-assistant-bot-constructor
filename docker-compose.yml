@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: telegram_new_bot
+    container_name: Conventional_Commits_Helper
     ports:
-      - 3004:3004
+      - 3003:3003
     restart: always
     networks:
       - home

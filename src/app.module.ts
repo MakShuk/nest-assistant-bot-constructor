@@ -17,6 +17,7 @@ import { VectorStoresService } from './vector-stores/vector-stores.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guard/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { InitializationService } from './services/Initialization.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { JwtModule } from '@nestjs/jwt';
     PrismaService,
     OggConverter,
     VectorStoresService,
+    InitializationService,
   ],
 })
 export class AppModule {}

@@ -302,6 +302,45 @@ export class CommandsService {
     }
   };
 
+  fileOneAnswer = async (ctx: Context) => {
+    try {
+      if (!('document' in ctx.message)) return;
+
+      const sendMessage = await ctx.reply(
+        '🔄 Подождите, идет обработка файла...',
+      );
+      const fileId = ctx.message.document.file_id;
+      const fileName = ctx.message.document.file_name;
+      const fileExtension = fileName.split('.').pop();
+
+      const link = await ctx.telegram.getFileLink(fileId);
+      const basePath = path.resolve(__dirname, '..', '../temp/');
+      const filePath = path.join(
+        basePath,
+        `${process.env.PROJECT_NAME}-${ctx.from.id}.${fileExtension}`,
+      );
+
+      await this.editMessageTextWithFallback(
+        ctx,
+        sendMessage,
+        '🔄 Файл загружается...',
+      );
+
+      await this.downloadFile(`${link}`, filePath);
+      const file = fs.readFileSync(filePath, 'utf8');
+
+      await this.streamText(
+        ctx,
+        `Пришли мне список тегов: ${file}`,
+        sendMessage,
+      );
+      await this.deleteFile(filePath);
+    } catch (error) {
+      console.error('Error in fileOneAnswer method:', error);
+      return ctx.reply('⚠️ Произошла ошибка при обработке файла');
+    }
+  };
+
   private splitMessage(message: string, limit = 4096) {
     const parts = [];
     while (message.length > 0) {

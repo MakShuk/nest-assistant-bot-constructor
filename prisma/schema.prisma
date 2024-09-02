@@ -14,7 +14,7 @@ generator client {
 
 model User {
   telegramUserId String      @id @map("telegram_user_id")
-  username       String      @unique
+  username       String?      @unique
   createdAt      DateTime    @default(now()) @map("created_at")
   threads        Thread[]
 

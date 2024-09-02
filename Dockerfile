@@ -22,6 +22,8 @@ ADD package.json ./
 RUN npm install --only=prod
 # Копируем собранный код из предыдущего этапа в директорию dist текущего контейнера
 COPY --from=build /opt/app/dist  ./dist
+# Создаем папку temp в директории dist
+RUN mkdir -p ./temp
 # Копируем файл .env из предыдущего этапа в текущий контейнер
 COPY --from=build /opt/app/.env  ./
 # Копируем файл prisma из предыдущего этапа в текущий контейнер 
