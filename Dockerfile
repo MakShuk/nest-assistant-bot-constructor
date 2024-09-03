@@ -28,10 +28,9 @@ RUN mkdir -p ./temp
 COPY --from=build /opt/app/.env  ./
 # Копируем файл prisma из предыдущего этапа в текущий контейнер 
 COPY --from=build /opt/app/prisma  ./prisma
-
 # Создаем миграцию
-RUN npx prisma migrate dev --name init
-
+RUN npx prisma migrate deploy
+# Генерируем Prisma Client
 RUN npx prisma generate
 # Запускаем приложение
 CMD [ "node", "./dist/main.js" ]

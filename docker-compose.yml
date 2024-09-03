@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: Conventional_Commits_Helper
+    container_name: Obsdian_Teg_Bot
     ports:
-      - 3003:3003
+      - 4000:4000
     restart: always
     networks:
       - home
