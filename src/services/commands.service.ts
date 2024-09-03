@@ -341,6 +341,28 @@ export class CommandsService {
     }
   };
 
+  info = async (ctx: Context) => {
+    const sendMessage = await ctx.reply(
+      '🔄 Подождите, идет получение информации...',
+    );
+
+    const localAssistant = await this.assistant.getLastAssistant();
+
+    const assistant = await this.assistant.getAssistantById(
+      localAssistant.openaiAssistantId,
+    );
+
+    const message = `Информация о помощнике: 
+    - Название: ${assistant.name}
+    - Модель: ${assistant.model}
+    - ID: ${assistant.id}
+    - Инструкция: ${assistant.instructions}
+    `;
+
+    await this.editMessageTextWithFallback(ctx, sendMessage, message);
+    return;
+  };
+
   private splitMessage(message: string, limit = 4096) {
     const parts = [];
     while (message.length > 0) {

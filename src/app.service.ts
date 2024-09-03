@@ -21,6 +21,7 @@ export class AppService implements OnModuleInit {
     this.telegraf.createCommand('start', this.commands.start);
     this.telegraf.createCommand('reset', this.commands.reset);
     this.telegraf.createCommand('store', this.commands.store);
+    this.telegraf.createCommand('info', this.commands.info);
     this.telegraf.textMessage(this.commands.streamText);
     this.telegraf.voiceMessage(this.commands.voiceMessage);
     this.telegraf.imageMessage(this.commands.imageMessage);
