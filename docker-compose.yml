@@ -5,8 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: Obsdian_Teg_Bot
-    ports:
+    container_name: Rest_CLinet_Helper
       - 4000:4000
     restart: always
     networks:

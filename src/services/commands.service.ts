@@ -326,7 +326,10 @@ export class CommandsService {
         '🔄 Файл загружается...',
       );
 
-      await this.downloadFile(`${link}`, filePath);
+      console.log('Fie path:', filePath);
+      console.log('Link:', link.href);
+
+      await this.downloadFile(link.href, filePath);
       const file = fs.readFileSync(filePath, 'utf8');
 
       await this.streamText(
