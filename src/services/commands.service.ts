@@ -95,16 +95,20 @@ export class CommandsService {
         ) {
           lastCallTime = currentTime;
           if (messagesSplit.length > 1) {
-            messagesSplit = this.splitMessage(textInStream, 3900);
-            await this.editMessageText(ctx, sendMessage, messagesSplit[0]);
-            sendMessage = await ctx.reply(`Обработка сообщения...`);
-            textInStream = messagesSplit[1];
+            if (sendMessage.text !== messagesSplit[0]) {
+              messagesSplit = this.splitMessage(textInStream, 3900);
+              await this.editMessageText(ctx, sendMessage, messagesSplit[0]);
+              sendMessage = await ctx.reply(`Обработка сообщения...`);
+              textInStream = messagesSplit[1];
+            }
           } else {
-            await this.editMessageTextWithFallback(
-              ctx,
-              sendMessage,
-              messagesSplit[0],
-            );
+            if (sendMessage.text !== messagesSplit[0]) {
+              await this.editMessageTextWithFallback(
+                ctx,
+                sendMessage,
+                messagesSplit[0],
+              );
+            }
           }
         }
       });
@@ -334,7 +338,7 @@ export class CommandsService {
 
       await this.streamText(
         ctx,
-        `Пришли мне список тегов: ${file}`,
+        `Информация для обработки: ${file}`,
         sendMessage,
       );
       await this.deleteFile(filePath);
