@@ -16,7 +16,7 @@ export class OpenAIModule {
           useFactory: async (configService: ConfigService) => {
             const apiKey = configService.get<string>('OPEN_AI_KEY');
             const proxy = configService.get<string>('PROXY');
-            const agent = proxy.length > 8 ? new HttpsProxyAgent(proxy) : null;
+            const agent = proxy ? new HttpsProxyAgent(proxy) : null;
 
             if (!apiKey) {
               throw new Error('OPEN_AI_KEY is not defined in the environment');
