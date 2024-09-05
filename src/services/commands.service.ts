@@ -5,8 +5,8 @@ import { ThreadsService } from 'src/threads/threads.service';
 import { Context, Markup } from 'telegraf';
 import { Message } from 'telegraf/typings/core/types/typegram';
 import * as path from 'path';
-import axios from 'axios';
 import * as fs from 'fs';
+import fetch from 'node-fetch';
 import { OggConverter } from './ogg-converter.service';
 import { VectorStoresService } from 'src/vector-stores/vector-stores.service';
 
@@ -80,6 +80,14 @@ export class CommandsService {
         assistant_id: openaiAssistantId,
       });
 
+      run.on('error', async (error) =>
+        this.editMessageText(
+          ctx,
+          sendMessage,
+          `⚠️ Произошла ошибка при обработке запроса: ${error.message}`,
+        ),
+      );
+
       let textInStream = ``;
       let lastCallTime = Date.now();
 
@@ -95,20 +103,16 @@ export class CommandsService {
         ) {
           lastCallTime = currentTime;
           if (messagesSplit.length > 1) {
-            if (sendMessage.text !== messagesSplit[0]) {
-              messagesSplit = this.splitMessage(textInStream, 3900);
-              await this.editMessageText(ctx, sendMessage, messagesSplit[0]);
-              sendMessage = await ctx.reply(`Обработка сообщения...`);
-              textInStream = messagesSplit[1];
-            }
+            messagesSplit = this.splitMessage(textInStream, 3900);
+            await this.editMessageText(ctx, sendMessage, messagesSplit[0]);
+            sendMessage = await ctx.reply(`Обработка сообщения...`);
+            textInStream = messagesSplit[1];
           } else {
-            if (sendMessage.text !== messagesSplit[0]) {
-              await this.editMessageTextWithFallback(
-                ctx,
-                sendMessage,
-                messagesSplit[0],
-              );
-            }
+            await this.editMessageTextWithFallback(
+              ctx,
+              sendMessage,
+              messagesSplit[0],
+            );
           }
         }
       });
@@ -142,21 +146,10 @@ export class CommandsService {
       const fileLink = await ctx.telegram.getFileLink(fileId);
       const userId = ctx.from.id;
 
-      const response = await axios({
-        method: 'get',
-        url: String(fileLink),
-        responseType: 'stream',
-      });
-
-      const writer = fs.createWriteStream(
+      await this.downloadFile(
+        String(fileLink),
         `${audioFolderPath}/${ctx.from.id}.ogg`,
       );
-
-      await new Promise((resolve, reject) => {
-        response.data.pipe(writer);
-        writer.on('finish', resolve);
-        writer.on('error', reject);
-      });
 
       await this.covertToMp3(String(userId));
 
@@ -330,12 +323,11 @@ export class CommandsService {
         '🔄 Файл загружается...',
       );
 
-      console.log('Fie path:', filePath);
-      console.log('Link:', link.href);
-
+      console.log(`Пытаюсь загрузить файл: ${link.href}`);
       await this.downloadFile(link.href, filePath);
+      console.log(`Файл загружен: ${filePath}`);
       const file = fs.readFileSync(filePath, 'utf8');
-
+      console.log(`Передаю информация в streamText`);
       await this.streamText(
         ctx,
         `Информация для обработки: ${file}`,
@@ -472,33 +464,30 @@ export class CommandsService {
 
   private async downloadFile(fileUrl: string, outputLocationPath: string) {
     try {
-      const writer = fs.createWriteStream(outputLocationPath);
+      const response = await fetch(fileUrl);
 
-      const response = await axios({
-        method: 'get',
-        url: fileUrl,
-        responseType: 'stream',
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${fileUrl}: ${response.statusText}`);
+      }
+
+      const fileStream = fs.createWriteStream(outputLocationPath);
+      response.body.pipe(fileStream);
+
+      await new Promise((resolve, reject) => {
+        fileStream.on('finish', () => resolve({ data: 'OK' }));
+        fileStream.on('error', (error) =>
+          reject({
+            errorMessages: `Error in downloadFile method: ${error.message}`,
+          }),
+        );
       });
 
-      return new Promise<{ data: string } | { errorMessages: string }>(
-        (resolve, reject) => {
-          response.data.pipe(writer);
-          let error: null | Error = null;
-          writer.on('error', (err) => {
-            error = err;
-            writer.close();
-            reject({ errorMessages: '⚠️ Произошла ошибка при загрузке файла' });
-          });
-          writer.on('close', () => {
-            if (!error) {
-              resolve({ data: 'Файл успешно загружен' });
-            }
-          });
-        },
-      );
+      return { data: `Файл успешно загружен` };
     } catch (error) {
       console.error('Error in downloadFile method:', error);
-      throw new Error('⚠️ Произошла ошибка при загрузке файла');
+      return {
+        errorMessages: `Error in downloadFile method: ${error.message}`,
+      };
     }
   }
 

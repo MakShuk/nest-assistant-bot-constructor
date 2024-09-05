@@ -58,3 +58,6 @@ prisma/dev.db
 
 #docker
 docker-compose.yml
+
+#prisma
+prisma/migraration/

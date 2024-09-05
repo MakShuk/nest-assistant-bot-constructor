@@ -62,7 +62,7 @@ export class ThreadsService {
   async addImageMessagesToThread(
     openaiThreadId: string,
     message: string,
-    imageUrl: string,
+    fileId: string,
   ) {
     return await this.openai.beta.threads.messages.create(openaiThreadId, {
       role: 'user',
@@ -72,8 +72,8 @@ export class ThreadsService {
           text: message,
         },
         {
-          type: 'image_url',
-          image_url: { url: imageUrl },
+          type: 'image_file',
+          image_file: { file_id: fileId },
         },
       ],
     });

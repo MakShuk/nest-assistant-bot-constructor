@@ -18,6 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guard/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { InitializationService } from './services/Initialization.service';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { InitializationService } from './services/Initialization.service';
       global: true,
       secret: process.env.JWT_SECRET,
     }),
+    FileModule,
   ],
   controllers: [],
   providers: [

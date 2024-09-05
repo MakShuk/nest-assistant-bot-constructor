@@ -13,27 +13,27 @@ generator client {
 }
 
 model User {
-  telegramUserId String      @id @map("telegram_user_id")
-  username       String?      @unique
-  createdAt      DateTime    @default(now()) @map("created_at")
+  telegramUserId String   @id @map("telegram_user_id")
+  username       String?  @unique
+  createdAt      DateTime @default(now()) @map("created_at")
   threads        Thread[]
 
   @@map("users")
 }
 
 model Assistant {
-  openaiAssistantId String       @id @map("openai_assistant_id")
-  createdAt         DateTime     @default(now()) @map("created_at")
+  openaiAssistantId String        @id @map("openai_assistant_id")
+  createdAt         DateTime      @default(now()) @map("created_at")
   vectorStores      VectorStore[]
 
   @@map("assistants")
 }
 
 model VectorStore {
-  openaiVectorStoreId String    @id @map("openai_vector_store_id")
+  openaiVectorStoreId String     @id @map("openai_vector_store_id")
   assistant           Assistant? @relation(fields: [openaiAssistantId], references: [openaiAssistantId])
   openaiAssistantId   String?    @map("openai_assistant_id")
-  createdAt           DateTime  @default(now()) @map("created_at")
+  createdAt           DateTime   @default(now()) @map("created_at")
 
   @@map("vector_store")
 }
@@ -43,6 +43,16 @@ model Thread {
   user           User     @relation(fields: [telegramUserId], references: [telegramUserId])
   telegramUserId String   @map("telegram_user_id")
   createdAt      DateTime @default(now()) @map("created_at")
+  files          File[]
 
   @@map("thread")
+}
+
+model File {
+  openaiFileId String   @id @map("openai_file_id")
+  thread       Thread   @relation(fields: [threadId], references: [openaiThreadId])
+  threadId     String   @map("thread_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("files")
 }
