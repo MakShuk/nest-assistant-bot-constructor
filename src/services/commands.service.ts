@@ -429,11 +429,11 @@ export class CommandsService {
       return;
     }
 
-    if ('error' in editMessage) {
+    if (editMessage && 'error' in editMessage) {
       editMessage = await this.editMessageText(ctx, oldMessage, newMessage);
     }
 
-    if ('error' in editMessage) {
+    if (editMessage && 'error' in editMessage) {
       await this.editMessageText(ctx, oldMessage, editMessage.error);
     }
   }
