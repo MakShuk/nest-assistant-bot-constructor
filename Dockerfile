@@ -33,7 +33,7 @@ RUN npx prisma migrate deploy
 # Генерируем Prisma Client
 RUN npx prisma generate
 # Запускаем приложение
-CMD [ "node", "./dist/main.js" ]
+CMD [ "NODE_ENV=production node", "./dist/main.js" ]
 
 #docker image build -t telegram_bot_image .
 #docker run --name news_bot -d telegram_bot_image:latest

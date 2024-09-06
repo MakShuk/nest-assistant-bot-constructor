@@ -6,7 +6,7 @@ export class ThreadsController {
   constructor(private readonly threadsService: ThreadsService) {}
 
   @Post(`:userId`)
-  async getAllThreads(@Param('userId') userId: string) {
+  async createThread(@Param('userId') userId: string) {
     return await this.threadsService.createThread(userId);
   }
 

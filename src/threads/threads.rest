@@ -1,22 +1,21 @@
-@baseUrl = http://localhost:3003
+@baseUrl = http://localhost:2001
 
 ### 
-GET {{baseUrl}}/threads/3243223dfAfd_Svd!
-
+GET {{baseUrl}}/threads/3053617
 ###
 POST {{baseUrl}}/threads/305343617
 
 ###
-GET {{baseUrl}}/threads/thread/thread_9SxoEMY9BK6cMmmPovBqxQSQ
+GET {{baseUrl}}/threads/thread/thread_wPCAYHX8xymFN9hVEhZ99ztg
 
 ###
-GET {{baseUrl}}/threads/3243223dfAfd_Svd!
+GET {{baseUrl}}/threads/305343617
 
 ###
-DELETE {{baseUrl}}/threads/thread_9SxoEMY9BK6cMmmPovBqxQSQ
+DELETE {{baseUrl}}/threads/thread_CcidvyijcWD7dFgIK1q35oDE
 
 ###
-POST {{baseUrl}}/threads/user123/Раскажи%20анегдот%21
+POST {{baseUrl}}/threads/3343617/Раскажи%20анегдот%21
 
 ### 
 POST {{baseUrl}}/threads/add-image/thread_0ZS7VEs3Q3ovtqZcegn5L0RI

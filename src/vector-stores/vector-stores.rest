@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3003
+@baseUrl = http://localhost:2001
 
 ### 
 GET {{baseUrl}}/vector-stores

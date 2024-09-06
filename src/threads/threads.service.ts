@@ -43,6 +43,21 @@ export class ThreadsService {
   }
 
   async deleteThread(threadId: string) {
+    const threadFile = await this.prisma.file.findMany({
+      where: {
+        threadId: threadId,
+      },
+    });
+
+    for (const file of threadFile) {
+      await this.openai.files.del(file.openaiFileId);
+      await this.prisma.file.delete({
+        where: {
+          openaiFileId: file.openaiFileId,
+        },
+      });
+    }
+
     const threadAi = await this.openai.beta.threads.del(threadId);
     const threadDB = await this.prisma.thread.delete({
       where: {

@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:2001
+
+### 
+GET {{baseUrl}}/files/305343617
+###
+POST {{baseUrl}}/files/
+content-type: application/json
+
+{
+ "threadId": "thread_wPCAYHX8xymFN9hVEhZ99ztg", "path": "C:\\development\\NextJS\\next-short-news\\public\\resources\\habr\\332.jpg"
+}

@@ -26,11 +26,11 @@ export class InitializationService {
 
       if (!users.length) {
         console.log('Creating user');
-        this.initializationUsers(usersForSettings);
-
+        await this.initializationUsers(usersForSettings);
+        console.log(`Creating assistant ${formattedDate} ${instruction}`);
         await this.assistant.createAssistant(formattedDate, instruction);
 
-        if (assistantId.length > 20) {
+        if (assistantId && assistantId.length > 10) {
           await this.assistant.createAssistant(
             formattedDate,
             instruction,
@@ -46,9 +46,15 @@ export class InitializationService {
   }
 
   private async initializationUsers(users: string[]) {
-    for (const user of users) {
-      const newUser = await this.user.createUser(user);
-      await this.thread.createThread(newUser.telegramUserId);
+    try {
+      for (const user of users) {
+        const newUser = await this.user.createUser(user);
+        await this.thread.createThread(newUser.telegramUserId);
+      }
+    } catch (error) {
+      const errorMessage = `Initialization error: ${error}`;
+      console.error(errorMessage);
+      return { errorMessage };
     }
   }
 }
