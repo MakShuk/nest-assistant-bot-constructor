@@ -23,13 +23,14 @@ export class CommandsService {
   ) {}
 
   start = async (ctx: Context) => {
-    return ctx.reply(`Команды бота:
-       /start - Открывает главное меню помощника.
-       /reset - Сбрасывает текущее состояние`);
+    return ctx.reply(`🤖 Команды:
+  /start - Главное меню
+  /reset - Сброс состояния
+  /info - Информация`);
   };
 
   disable = async (ctx: Context) => {
-    return ctx.reply(`Функция не доступна для этого бота`);
+    return ctx.reply(`⚠️ Функция недоступна для этого бота.`);
   };
 
   reset = async (ctx: Context) => {
@@ -131,9 +132,7 @@ export class CommandsService {
       );
       run.on('end', async () => {
         await this.editMessageTextWithFallback(ctx, sendMessage, textInStream);
-        process.env.SAVE_CONTEXT === 'ON'
-          ? null
-          : await this.thread.resetThread(userId);
+        process.env.SAVE_CONTEXT ? null : await this.thread.resetThread(userId);
       });
     } catch (error) {
       const errorMessage = `⚠️ Произошла ошибка при обработке запроса: ${error.message}`;
@@ -403,12 +402,19 @@ export class CommandsService {
       localAssistant.openaiAssistantId,
     );
 
-    const message = `Информация о помощнике: 
-    - Название: ${assistant.name}
-    - Модель: ${assistant.model}
-    - ID: ${assistant.id}
-    - Инструкция: ${assistant.instructions}
-    `;
+    const message = `ℹ️ Информация о помощнике:
+- 🏷️ Название: ${assistant.name}
+- 🔢 Модель: ${assistant.model}
+- 🆔 ID: ${assistant.id}
+- 📋 Инструкция: ${assistant.instructions}
+
+🔧 Функциональность:
+- ✏️ Обработка текста: ${process.env.TEXT_ON ? '✅' : '❌'}
+- 🖼️ Обработка изображений: ${process.env.IMAGE_ON ? '✅' : '❌'}
+- 🎙️ Обработка аудио: ${process.env.VOICE_ON ? '✅' : '❌'}
+- 📂 Обработка файлов: ${process.env.FILE_ON ? '✅' : '❌'}
+- 💾 Сохранение контекста: ${process.env.SAVE_CONTEXT ? '✅' : '❌'}
+- ⚙️ Режим обработки файлов: ${process.env.FILE_MODE}`;
 
     await this.editMessageTextWithFallback(ctx, sendMessage, message);
     return;
