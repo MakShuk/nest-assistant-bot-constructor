@@ -12,19 +12,29 @@ export class AppService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    const fileCommand =
+    const fileMode =
       process.env.FILE_MODE === 'VECTOR'
         ? this.commands.fileMessage
         : this.commands.fileOneAnswer;
 
+    const fileCommand = process.env.FILE_ON ? fileMode : this.commands.disable;
+
+    const imageCommand = process.env.IMAGE_ON
+      ? this.commands.imageMessage
+      : this.commands.disable;
+
+    const voiceCommand = process.env.VOICE_ON
+      ? this.commands.voiceMessage
+      : this.commands.disable;
+
     this.initialization.on();
     this.telegraf.createCommand('start', this.commands.start);
-    this.telegraf.createCommand('reset', this.commands.reset);
+    this.telegraf.createCommand('reset', this.commands.disable);
     this.telegraf.createCommand('store', this.commands.store);
     this.telegraf.createCommand('info', this.commands.info);
     this.telegraf.textMessage(this.commands.streamText);
-    this.telegraf.voiceMessage(this.commands.voiceMessage);
-    this.telegraf.imageMessage(this.commands.imageMessage);
+    this.telegraf.voiceMessage(voiceCommand);
+    this.telegraf.imageMessage(imageCommand);
     this.telegraf.fileMessage(fileCommand);
     this.telegraf.buttonAction(`store`, this.commands.deleteStore);
   }

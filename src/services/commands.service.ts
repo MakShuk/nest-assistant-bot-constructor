@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import fetch from 'node-fetch';
 import { OggConverter } from './ogg-converter.service';
 import { VectorStoresService } from 'src/vector-stores/vector-stores.service';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class CommandsService {
@@ -16,6 +17,7 @@ export class CommandsService {
     private readonly assistant: AssistantsService,
     private readonly thread: ThreadsService,
     private readonly vector: VectorStoresService,
+    private readonly files: FilesService,
     private oggConverter: OggConverter,
     @Inject('OPENAI_INSTANCE') private readonly openai: OpenAI,
   ) {}
@@ -24,6 +26,10 @@ export class CommandsService {
     return ctx.reply(`Команды бота:
        /start - Открывает главное меню помощника.
        /reset - Сбрасывает текущее состояние`);
+  };
+
+  disable = async (ctx: Context) => {
+    return ctx.reply(`Функция не доступна для этого бота`);
   };
 
   reset = async (ctx: Context) => {
@@ -180,27 +186,73 @@ export class CommandsService {
     try {
       if (!('photo' in ctx.message)) return;
 
+      const sendMessage = await ctx.reply(
+        '🔄 Подождите, идет обработка фото...',
+      );
+
       const userId = `${ctx.from.id}`;
       const photos = ctx.message.photo;
       const highestQualityPhoto = photos[photos.length - 1];
       const file = await ctx.telegram.getFile(highestQualityPhoto.file_id);
-      const fileLink = await ctx.telegram.getFileLink(file.file_id);
+      const link = await ctx.telegram.getFileLink(file.file_id);
+      const fileExtension = file.file_path.split('.').pop();
 
-      const { openaiThreadId } =
-        await this.thread.getLastThreadByUserId(userId);
+      const basePath = path.resolve(__dirname, '..', '../temp/');
+      const filePath = path.join(
+        basePath,
+        `${process.env.PROJECT_NAME}-${ctx.from.id}.${fileExtension}`,
+      );
+
+      console.log(`Пытаюсь загрузить файл: ${link.href}`);
+      console.log(`userId: ${userId}`);
+
+      console.log(file);
+
+      await this.editMessageTextWithFallback(
+        ctx,
+        sendMessage,
+        '🔄 Файл загружается...',
+      );
+
+      const fileSaveStatus = await this.downloadFile(`${link}`, filePath);
+
+      if ('errorMessages' in fileSaveStatus) {
+        return ctx.reply(fileSaveStatus.errorMessages);
+      }
+
+      const lastThread = await this.thread.getLastThreadByUserId(userId);
+      const createOpenaiFile = await this.files.createImageFile(
+        lastThread.openaiThreadId,
+        filePath,
+      );
+
+      console.log(`Добавляю файл в тред: ${createOpenaiFile.threadId}`);
       await this.thread.addImageMessagesToThread(
-        openaiThreadId,
-        'Расскажи что на изображении',
-        `${fileLink}`,
+        lastThread.openaiThreadId,
+        ctx.message.caption || `Фото от пользователя ${userId}`,
+        createOpenaiFile.openaiFileId,
       );
 
-      const userMessage = ctx.message.caption || 'Расскажи что на изображении';
+      console.log(`Удаляю файл: ${filePath}`);
+      const deleteFileStatus = await this.deleteFile(filePath);
 
-      const message = await ctx.reply(
-        '🔄 Подождите, идет обработка изображения...',
-      );
+      if ('errorMessages' in deleteFileStatus) {
+        return this.editMessageTextWithFallback(
+          ctx,
+          sendMessage,
+          deleteFileStatus.errorMessages,
+        );
+      }
 
-      await this.streamText(ctx, userMessage, message);
+      if (ctx.message.caption) {
+        return await this.streamText(ctx, ctx.message.caption, sendMessage);
+      } else {
+        return await this.editMessageTextWithFallback(
+          ctx,
+          sendMessage,
+          '✅  Фото успешно обработано, задайте вопрос',
+        );
+      }
     } catch (error) {
       console.error('Ошибка при обработке фотографии:', error);
       await ctx.reply('Произошла ошибка при обработке фотографии.');

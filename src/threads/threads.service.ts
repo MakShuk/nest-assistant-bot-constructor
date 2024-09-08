@@ -108,12 +108,7 @@ export class ThreadsService {
 
   async resetThread(userId: string) {
     const thread = await this.getLastThreadByUserId(userId);
-    await this.openai.beta.threads.del(thread.openaiThreadId);
-    await this.prisma.thread.delete({
-      where: {
-        openaiThreadId: thread.openaiThreadId,
-      },
-    });
+    await this.deleteThread(thread.openaiThreadId);
     await this.createThread(userId);
     return `Thread for user ${userId} reset`;
   }

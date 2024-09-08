@@ -17,8 +17,11 @@ DELETE {{baseUrl}}/threads/thread_CcidvyijcWD7dFgIK1q35oDE
 ###
 POST {{baseUrl}}/threads/3343617/Раскажи%20анегдот%21
 
-### 
-POST {{baseUrl}}/threads/add-image/thread_0ZS7VEs3Q3ovtqZcegn5L0RI
+###
+POST {{baseUrl}}/threads/add-image/thread_ooTrQLcadx7NTWQlNS0D7AHU
 content-type: application/json
 
-{ "message": "What is the difference between these images?", "imageUrl": "https://cs1.htmlacademy.ru/blog/html/rastr-vector/545a35a4fe2c7df86eb0a58f86f49acb.png" }
+{
+ "message": "This is a test message",
+ "fileId": "file-7HG0mBLXjOsDSaSZ5o7hCjBS"
+}

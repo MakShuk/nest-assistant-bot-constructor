@@ -28,12 +28,12 @@ export class ThreadsController {
   @Post(`add-image/:openaiThreadId`)
   async addImageMessagesToThread(
     @Param('openaiThreadId') openaiThreadId: string,
-    @Body() data: { message: string; imageUrl: string },
+    @Body() data: { message: string; fileId: string },
   ) {
     return await this.threadsService.addImageMessagesToThread(
       openaiThreadId,
       data.message,
-      data.imageUrl,
+      data.fileId,
     );
   }
 
