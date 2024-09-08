@@ -58,11 +58,14 @@ RUN mkdir -p ./dist/temp
 # Устанавливаем URL базы данных для Prisma
 RUN echo 'DATABASE_URL="file:./dev.db"' >> .env
 
+# Выполняем миграции Prisma
+RUN npx prisma migrate dev --name init
+
 # Генерируем Prisma Client в продакшн-среде
 RUN npx prisma generate
 
 # Выполняем миграции Prisma
-RUN npx prisma migrate deploy
+RUN mkdir -p ./prisma && touch ./prisma/dev.db && npx prisma migrate deploy
 
 # Запускаем приложение
 CMD ["node", "./dist/main.js"]
