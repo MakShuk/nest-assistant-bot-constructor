@@ -34,6 +34,9 @@ FROM node:20-slim
 # Устанавливаем переменную окружения NODE_ENV
 ENV NODE_ENV=production
 
+# Устанавливаем OpenSSL и другие необходимые пакеты
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
+
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /opt/app
 
@@ -55,11 +58,11 @@ RUN mkdir -p ./dist/temp
 # Устанавливаем URL базы данных для Prisma
 RUN echo 'DATABASE_URL="file:./dev.db"' >> .env
 
+# Генерируем Prisma Client в продакшн-среде
+RUN npx prisma generate
+
 # Выполняем миграции Prisma
 RUN npx prisma migrate deploy
 
 # Запускаем приложение
 CMD ["node", "./dist/main.js"]
-
-#docker image build -t telegram_bot_image .
-#docker run --name news_bot -d telegram_bot_image:latest
