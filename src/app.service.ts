@@ -27,12 +27,16 @@ export class AppService implements OnModuleInit {
       ? this.commands.voiceMessage
       : this.commands.disable;
 
+    const textCommand = process.env.TEXT_ON
+      ? this.commands.streamText
+      : this.commands.disable;
+
     this.initialization.on();
     this.telegraf.createCommand('start', this.commands.start);
     this.telegraf.createCommand('reset', this.commands.disable);
     this.telegraf.createCommand('store', this.commands.store);
     this.telegraf.createCommand('info', this.commands.info);
-    this.telegraf.textMessage(this.commands.streamText);
+    this.telegraf.textMessage(textCommand);
     this.telegraf.voiceMessage(voiceCommand);
     this.telegraf.imageMessage(imageCommand);
     this.telegraf.fileMessage(fileCommand);
