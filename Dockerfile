@@ -28,9 +28,12 @@ RUN mkdir -p ./temp
 COPY --from=build /opt/app/.env.production  ./
 # Копируем файл prisma из предыдущего этапа в текущий контейнер 
 COPY --from=build /opt/app/prisma  ./prisma
+# Устанавливаем prisma
+RUN echo 'DATABASE_URL="file:./dev.db"' > .env
 # Создаем миграцию
 RUN npx prisma migrate deploy
 # Генерируем Prisma Client
+
 RUN npx prisma generate
 # Запускаем приложение
 CMD [ "NODE_ENV=production node", "./dist/main.js" ]
