@@ -31,7 +31,7 @@ export class AppService implements OnModuleInit {
       ? this.commands.streamText
       : this.commands.disable;
 
-    const resetCommand = process.env.RESET_ON
+    const resetCommand = process.env.SAVE_CONTEXT
       ? this.commands.notResetContext
       : this.commands.resetContext;
 
