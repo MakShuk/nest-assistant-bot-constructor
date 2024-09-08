@@ -11,7 +11,7 @@ ADD . .
 # Запускаем сборку проекта
 RUN npm run build
 # Копируем файл .env в директорию app
-COPY .env app
+COPY .env.production app
 # Копируем файл prisma в директорию app
 FROM node:20
 # Устанавливаем рабочую директорию в контейнере
@@ -25,7 +25,7 @@ COPY --from=build /opt/app/dist  ./dist
 # Создаем папку temp в директории dist
 RUN mkdir -p ./temp
 # Копируем файл .env из предыдущего этапа в текущий контейнер
-COPY --from=build /opt/app/.env  ./
+COPY --from=build /opt/app/.env.production  ./
 # Копируем файл prisma из предыдущего этапа в текущий контейнер 
 COPY --from=build /opt/app/prisma  ./prisma
 # Создаем миграцию
