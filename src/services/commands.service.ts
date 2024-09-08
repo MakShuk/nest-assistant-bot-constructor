@@ -24,19 +24,33 @@ export class CommandsService {
 
   start = async (ctx: Context) => {
     return ctx.reply(`🤖 Команды:
-  /start - Главное меню
+  /start - Меню
   /reset - Сброс состояния
-  /info - Информация`);
+  /info  - Информация
+  /store - Хранилище фалов`);
   };
 
   disable = async (ctx: Context) => {
     return ctx.reply(`⚠️ Функция недоступна для этого бота.`);
   };
 
-  reset = async (ctx: Context) => {
+  notResetContext = async (ctx: Context) => {
     return ctx.reply(
       `Ручной сброс состояния не требуется, бот автоматически сбрасывает состояние после завершения диалога.`,
     );
+  };
+
+  resetContext = async (ctx: Context) => {
+    const userId = `${ctx.from.id}`;
+    const thread = await this.thread.getLastThreadByUserId(userId);
+
+    if (!thread) {
+      return ctx.reply(`Состояние не найдено`);
+    }
+
+    await this.thread.resetThread(userId);
+
+    return ctx.reply(`Состояние сброшено`);
   };
 
   store = async (ctx: Context) => {

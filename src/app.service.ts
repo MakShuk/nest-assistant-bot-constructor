@@ -31,9 +31,13 @@ export class AppService implements OnModuleInit {
       ? this.commands.streamText
       : this.commands.disable;
 
+    const resetCommand = process.env.RESET_ON
+      ? this.commands.notResetContext
+      : this.commands.resetContext;
+
     this.initialization.on();
     this.telegraf.createCommand('start', this.commands.start);
-    this.telegraf.createCommand('reset', this.commands.disable);
+    this.telegraf.createCommand('reset', resetCommand);
     this.telegraf.createCommand('store', this.commands.store);
     this.telegraf.createCommand('info', this.commands.info);
     this.telegraf.textMessage(textCommand);
