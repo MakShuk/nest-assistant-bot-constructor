@@ -1,42 +1,65 @@
 # Используем образ node версии 20 как базовый для этапа сборки
 FROM node:20 as build
+
+# Устанавливаем переменную окружения NODE_ENV
+ENV NODE_ENV=production
+
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /opt/app/
-# Копируем файлы json (включая package.json) в рабочую директорию
-ADD *.json ./
-# Устанавливаем зависимости, указанные в package.json
-RUN npm install
-# Копируем остальные файлы в рабочую директорию
-ADD . .
+
+# Копируем файлы package.json и package-lock.json (если есть)
+COPY package*.json ./
+
+# Устанавливаем зависимости, включая devDependencies
+RUN npm ci
+
+# Устанавливаем NestJS CLI глобально
+RUN npm install -g @nestjs/cli
+
+# Копируем остальные файлы проекта
+COPY . .
+
+# Копируем файл .env.production
+COPY .env.production .env
+
 # Запускаем сборку проекта
 RUN npm run build
-# Копируем файл .env в директорию app
-COPY .env.production app
-# Копируем файл prisma в директорию app
-FROM node:20
+
+# Генерируем Prisma Client
+RUN npx prisma generate
+
+# Используем образ node версии 20 как базовый для финального этапа
+FROM node:20-slim
+
+# Устанавливаем переменную окружения NODE_ENV
+ENV NODE_ENV=production
+
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /opt/app
-# Копируем файл package.json в рабочую директорию
-ADD package.json ./
-# Устанавливаем только продакшн-зависимости
-RUN npm install --only=prod
-# Копируем собранный код из предыдущего этапа в директорию dist текущего контейнера
-COPY --from=build /opt/app/dist  ./dist
-# Создаем папку temp в директории dist
-RUN mkdir -p ./temp
-# Копируем файл .env из предыдущего этапа в текущий контейнер
-COPY --from=build /opt/app/.env.production  ./
-# Копируем файл prisma из предыдущего этапа в текущий контейнер 
-COPY --from=build /opt/app/prisma  ./prisma
-# Устанавливаем prisma
-RUN echo 'DATABASE_URL="file:./dev.db"' > .env
-# Создаем миграцию
-RUN npx prisma migrate deploy
-# Генерируем Prisma Client
 
-RUN npx prisma generate
+# Копируем package.json и package-lock.json
+COPY package*.json ./
+
+# Устанавливаем только продакшн-зависимости
+RUN npm ci --only=production
+
+# Копируем собранный код и необходимые файлы из предыдущего этапа
+COPY --from=build /opt/app/dist ./dist
+COPY --from=build /opt/app/.env ./.env
+COPY --from=build /opt/app/prisma ./prisma
+COPY --from=build /opt/app/node_modules/.prisma ./node_modules/.prisma
+
+# Создаем папку temp в директории dist
+RUN mkdir -p ./dist/temp
+
+# Устанавливаем URL базы данных для Prisma
+RUN echo 'DATABASE_URL="file:./dev.db"' >> .env
+
+# Выполняем миграции Prisma
+RUN npx prisma migrate deploy
+
 # Запускаем приложение
-CMD [ "NODE_ENV=production node", "./dist/main.js" ]
+CMD ["node", "./dist/main.js"]
 
 #docker image build -t telegram_bot_image .
 #docker run --name news_bot -d telegram_bot_image:latest
