@@ -18,7 +18,7 @@ export class InitializationService {
         .toLocaleDateString('ru-RU')
         .slice(0, -5)
         .replace(/\./g, '.');
-      const assistantId = process.env.ASSISTANT_ID;
+
       const instruction = process.env.INSTRUCTION;
       const usersForSettings = process.env.USERS
         ? JSON.parse(process.env.USERS)
@@ -27,16 +27,16 @@ export class InitializationService {
       if (!users.length) {
         console.log('Creating user');
         await this.initializationUsers(usersForSettings);
-        console.log(`Creating assistant ${formattedDate} ${instruction}`);
-        await this.assistant.createAssistant(formattedDate, instruction);
 
-        if (assistantId && assistantId.length > 10) {
+        if (process.env.ASSISTANT_ID) {
+          console.log(`Creating assistant with id ${process.env.ASSISTANT_ID}`);
           await this.assistant.createAssistant(
             formattedDate,
             instruction,
-            assistantId,
+            process.env.ASSISTANT_ID,
           );
         } else {
+          console.log(`Creating assistant with instruction ${instruction}`);
           await this.assistant.createAssistant(formattedDate, instruction);
         }
       }

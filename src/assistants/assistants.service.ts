@@ -23,7 +23,8 @@ export class AssistantsService {
     instructions: string,
     assistantId?: string,
   ) {
-    let createdAssistantId = assistantId;
+    let openaiAssistantId: string;
+
     if (!assistantId) {
       const assistant = await this.openai.beta.assistants.create({
         name: `${process.env.PROJECT_NAME}-${assistantName}_TG_BOT`,
@@ -31,12 +32,14 @@ export class AssistantsService {
         tools: [{ type: 'file_search' }],
         model: process.env.OPEN_AI_MODEL,
       });
-      createdAssistantId = assistant.id;
+      openaiAssistantId = assistant.id;
+    } else {
+      openaiAssistantId = assistantId;
     }
 
     return this.prisma.assistant.create({
       data: {
-        openaiAssistantId: createdAssistantId,
+        openaiAssistantId: openaiAssistantId,
       },
     });
   }

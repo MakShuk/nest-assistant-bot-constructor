@@ -53,7 +53,7 @@ COPY --from=build /opt/app/prisma ./prisma
 COPY --from=build /opt/app/node_modules/.prisma ./node_modules/.prisma
 
 # Создаем папку temp в директории dist
-RUN mkdir -p ./dist/temp
+RUN mkdir -p ./temp
 
 # Устанавливаем URL базы данных для Prisma
 RUN echo 'DATABASE_URL="file:./dev.db"' >> .env
