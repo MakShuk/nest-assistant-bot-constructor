@@ -48,7 +48,6 @@ import { FilesModule } from './files/file.module';
     CommandsService,
     AppService,
     AssistantsService,
-    TelegrafService,
     PrismaService,
     OggConverter,
     VectorStoresService,
