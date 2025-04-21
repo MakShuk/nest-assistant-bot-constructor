@@ -1,199 +1,127 @@
-# Telegram Bot Constructor
+# Nest Assistant Bot Constructor 🤖
 
-Проект представляет собой конструктор Telegram ботов с использованием NestJS и Docker. Каждый бот работает в отдельном контейнере и имеет свою специализированную функциональность.
+![License](https://img.shields.io/badge/license-MIT-blue)
+![NestJS](https://img.shields.io/badge/NestJS-10.x-red)
+![OpenAI](https://img.shields.io/badge/OpenAI-API-green)
+![Telegram](https://img.shields.io/badge/Telegram-Bot-blue)
 
-## Структура проекта
+A powerful NestJS-based constructor for creating AI assistant bots that integrate with Telegram and OpenAI.
 
-Проект использует Docker Compose версии 3.8 для управления несколькими контейнерами ботов. Все боты работают в одной сети `home` и имеют доступ к общим ресурсам.
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [License](#license)
 
-## Список ботов
+## Features
 
-1. **ObsidianTagBot** (Порт: 4001)
-   - Бот для работы с тегами Obsidian
-   - Поддержка работы с файлами
+- 🤖 Create and manage AI assistants using OpenAI API
+- 💬 Seamless Telegram bot integration
+- 🗄️ Advanced vector store support for efficient data retrieval
+- 📁 File management system
+- 🔄 Thread management for conversations
+- 🔐 Built-in authentication and user management
+- 🎯 RESTful API endpoints
+- 📊 Prisma ORM for database operations
 
-2. **RestClientBot** (Порт: 4002)
-   - Бот для тестирования REST API запросов
+## Prerequisites
 
-3. **MarkdownFormatExpertBot** (Порт: 4003)
-   - Бот для форматирования Markdown
-   - Поддержка работы с файлами и изображениями
+- Node.js 18.x or higher
+- PostgreSQL 12 or higher
+- OpenAI API key
+- Telegram Bot Token
+- Docker (optional, for containerization)
 
-4. **OrphoTextCorrectorBot** (Порт: 4004)
-   - Бот для исправления орфографических ошибок
-   - Поддержка голосовых сообщений
+## Installation
 
-5. **ChatGPT-51Bot** (Порт: 4005)
-   - Расширенный чат-бот с GPT
-   - Поддержка голосовых сообщений, изображений и файлов
-   - Сохранение контекста разговора
-   - Векторное хранилище для файлов
-
-6. **PlanTaskHelperBot** (Порт: 4006)
-   - Бот для планирования задач
-   - Поддержка голосовых сообщений
-
-7. **CommitCrafterBot** (Порт: 4007)
-   - Бот для создания commit сообщений
-   - Поддержка голосовых сообщений
-
-8. **EmojiMasterBot** (Порт: 4008)
-   - Бот для работы с эмодзи
-   - Поддержка голосовых сообщений и файлов
-
-## Настройка и запуск
-
-1. Создайте файл `.env` в корневой директории проекта
-2. Скопируйте необходимые переменные окружения для каждого бота
-3. Запустите контейнеры:
+1. Clone the repository:
 ```bash
-docker-compose up -d
+git clone [repository-url]
+cd nest-assistant-bot-constructor
 ```
 
-## Переменные окружения
-
-Каждый бот требует следующие базовые переменные окружения:
-
-- `TELEGRAM_BOT_TOKEN` - Токен бота Telegram
-- `PROJECT_NAME` - Название проекта
-- `ASSISTANT_ID` - ID ассистента OpenAI
-
-Дополнительные переменные:
-
-- `FILE_ON` - Включение поддержки файлов (true/false)
-- `IMAGE_ON` - Включение поддержки изображений (true/false)
-- `VOICE_ON` - Включение поддержки голосовых сообщений (true/false)
-- `SAVE_CONTEXT` - Сохранение контекста разговора (true/false)
-- `FILE_MODE` - Режим работы с файлами ("VECTOR" для векторного хранилища)
-
-## Сеть
-
-Все боты работают в сети `home` с драйвером `bridge`. Это обеспечивает изоляцию и безопасное взаимодействие между контейнерами.
-
-## Порты
-
-Каждый бот использует свой порт для работы:
-
-- ObsidianTagBot: 4001
-- RestClientBot: 4002
-- MarkdownFormatExpertBot: 4003
-- OrphoTextCorrectorBot: 4004
-- ChatGPT-51Bot: 4005
-- PlanTaskHelperBot: 4006
-- CommitCrafterBot: 4007
-- EmojiMasterBot: 4008
-
-## Примеры конфигурации
-
-### Dockerfile
-
-```dockerfile
-# Используем образ node версии 20 как базовый для этапа сборки
-FROM node:20 as build
-
-# Устанавливаем переменную окружения NODE_ENV
-ENV NODE_ENV=production
-
-# Устанавливаем рабочую директорию в контейнере
-WORKDIR /opt/app/
-
-# Копируем файлы package.json и package-lock.json
-COPY package*.json ./
-
-# Устанавливаем зависимости, включая devDependencies
-RUN npm ci
-
-# Устанавливаем NestJS CLI глобально
-RUN npm install -g @nestjs/cli
-
-# Копируем остальные файлы проекта
-COPY . .
-
-# Копируем файл .env.production
-COPY .env.production .env
-
-# Запускаем сборку проекта
-RUN npm run build
-
-# Генерируем Prisma Client
-RUN npx prisma generate
-
-# Используем образ node версии 20 как базовый для финального этапа
-FROM node:20-slim
-
-ENV NODE_ENV=production
-
-# Устанавливаем OpenSSL и другие необходимые пакеты
-RUN apt-get update -y && apt-get install -y openssl libssl-dev
-
-WORKDIR /opt/app
-
-# Копируем package.json и package-lock.json
-COPY package*.json ./
-
-# Устанавливаем только продакшн-зависимости
-RUN npm ci --only=production
-
-# Копируем собранный код и необходимые файлы
-COPY --from=build /opt/app/dist ./dist
-COPY --from=build /opt/app/.env ./.env
-COPY --from=build /opt/app/prisma ./prisma
-COPY --from=build /opt/app/node_modules/.prisma ./node_modules/.prisma
-
-# Создаем папку temp
-RUN mkdir -p ./temp
-
-# Настройка Prisma
-RUN echo 'DATABASE_URL="file:./dev.db"' >> .env
-RUN npx prisma migrate dev --name init
-RUN npx prisma generate
-RUN mkdir -p ./prisma && touch ./prisma/dev.db && npx prisma migrate deploy
-
-# Запускаем приложение
-CMD ["node", "./dist/main.js"]
+2. Install dependencies:
+```bash
+npm install
 ```
 
-### docker-compose.yml
-
-```yaml
-version: '3.8'
-services:
-  bot-1:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ObsidianTagBot
-    ports:
-      - 4001:4001
-    restart: always
-    networks:
-      - home
-    environment:
-      - TELEGRAM_BOT_TOKEN=72****
-      - PROJECT_NAME=ObsdianTagBot
-      - ASSISTANT_ID=asst_ID***
-      - FILE_ON=true
-
-  bot-2:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: RestClientBot
-    ports:
-      - 4002:4002
-    restart: always
-    networks:
-      - home
-    environment:
-      - TELEGRAM_BOT_TOKEN=74**
-      - PROJECT_NAME=RestClientBot
-      - ASSISTANT_ID=asst_***
-
-  # ... Остальные боты конфигурируются аналогично
-
-networks:
-  home:
-    driver: bridge
+3. Set up environment variables:
+```bash
+# Create .env file and configure your variables
+cp .env.example .env
 ```
 
-Полный пример конфигурации включает все 8 ботов с их специфическими настройками и переменными окружения. Для краткости здесь показаны только первые два бота.
+4. Run database migrations:
+```bash
+npx prisma migrate dev
+```
+
+5. Start the application:
+```bash
+# Development
+npm run start:dev
+
+# Production
+npm run build
+npm run start:prod
+```
+
+## Configuration
+
+### Environment Variables
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `TELEGRAM_BOT_TOKEN` - Your Telegram bot token
+- [Other configuration variables]
+
+### OpenAI Configuration
+
+Configure OpenAI settings in `src/configs/openai.config.ts`.
+
+### Telegram Configuration
+
+Configure Telegram bot settings in `src/configs/telegram.config.ts`.
+
+## Usage
+
+### Creating a New Assistant
+
+```typescript
+// Example of creating an assistant
+POST /assistants
+{
+  "name": "MyAssistant",
+  "model": "gpt-4",
+  "instructions": "You are a helpful assistant..."
+}
+```
+
+### Managing Conversations
+
+```typescript
+// Start a new conversation thread
+POST /threads
+{
+  "assistantId": "your-assistant-id"
+}
+```
+
+## API Documentation
+
+The API includes several modules:
+
+- `/assistants` - Manage AI assistants
+- `/threads` - Handle conversation threads
+- `/files` - File management operations
+- `/users` - User management
+- `/vector-stores` - Vector storage operations
+
+For detailed API documentation, run the server and visit `/api` endpoint.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
