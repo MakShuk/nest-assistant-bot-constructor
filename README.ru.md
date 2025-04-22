@@ -1,5 +1,7 @@
 # Конструктор Ассистент-Ботов на NestJS 🤖
 
+| English  | [🇬🇧 Read in English](README.md) |
+
 ![Лицензия](https://img.shields.io/badge/license-MIT-blue)
 ![NestJS](https://img.shields.io/badge/NestJS-10.x-red)
 ![OpenAI](https://img.shields.io/badge/OpenAI-API-green)
