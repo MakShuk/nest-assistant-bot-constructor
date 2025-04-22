@@ -1,6 +1,6 @@
 # Конструктор Ассистент-Ботов на NestJS 🤖
 
-|<p align="right">
+<p align="right">
   <a href="README.md"><img src="https://img.shields.io/badge/English-blue?style=for-the-badge&logo=github" alt="English"></a>
 </p>
 
