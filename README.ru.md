@@ -1,6 +1,8 @@
 # Конструктор Ассистент-Ботов на NestJS 🤖
 
-| English  | [🇬🇧 Read in English](README.md) |
+|<p align="right">
+  <a href="README.md"><img src="https://img.shields.io/badge/English-blue?style=for-the-badge&logo=github" alt="English"></a>
+</p>
 
 ![Лицензия](https://img.shields.io/badge/license-MIT-blue)
 ![NestJS](https://img.shields.io/badge/NestJS-10.x-red)

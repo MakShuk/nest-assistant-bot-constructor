@@ -1,6 +1,8 @@
 # Nest Assistant Bot Constructor 🤖
 
-| Русский  | [🇷🇺 Читать на русском](README.ru.md) |
+<p align="right">
+  <a href="README.ru.md"><img src="https://img.shields.io/badge/Русский-red?style=for-the-badge&logo=github" alt="Русский"></a>
+</p>
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![NestJS](https://img.shields.io/badge/NestJS-10.x-red)
