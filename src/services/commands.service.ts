@@ -460,7 +460,13 @@ export class CommandsService {
   ) {
     try {
       if (newMessage.trim() === '') return;
-      if (oldMessage.text === newMessage) return;
+      
+      // Добавляем пробел в конец сообщения, если оно идентично предыдущему
+      let messageToSend = newMessage;
+      if (oldMessage.text === newMessage) {
+        messageToSend = newMessage + ' ';
+      }
+
       if (deleteMessage) {
         await ctx.telegram.deleteMessage(
           oldMessage.chat.id,
@@ -468,15 +474,34 @@ export class CommandsService {
         );
         return;
       }
+
       await ctx.telegram.editMessageText(
         oldMessage.chat.id,
         oldMessage.message_id,
         null,
-        newMessage,
+        messageToSend,
         markdown ? { parse_mode: 'Markdown' } : {},
       );
       return { data: `Сообщение успешно отредактировано` };
     } catch (error) {
+      // Если ошибка связана с идентичностью сообщений, добавляем пробел и пробуем снова
+      if (error.message.includes('message is not modified')) {
+        try {
+          const messageWithSpace = newMessage + ' ';
+          await ctx.telegram.editMessageText(
+            oldMessage.chat.id,
+            oldMessage.message_id,
+            null,
+            messageWithSpace,
+            markdown ? { parse_mode: 'Markdown' } : {},
+          );
+          return { data: `Сообщение успешно отредактировано` };
+        } catch (retryError) {
+          const errorMessages = `⚠️ Произошла ошибка при редактировании сообщения: ${retryError.message}`;
+          return { error: errorMessages };
+        }
+      }
+      
       const errorMessages = `⚠️ Произошла ошибка при редактировании сообщения: ${error.message}`;
       return { error: errorMessages };
     }

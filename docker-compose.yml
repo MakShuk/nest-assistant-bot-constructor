@@ -45,3 +45,5 @@ services:
       - VOICE_ON=true
       - FILE_ON=true
 networks:
+  home:
+    driver: bridge
