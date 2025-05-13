@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  bot-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: OrphoTextCorrectorBot
+    restart: always
+    networks:
+      - home
+    environment:
+      - TELEGRAM_BOT_TOKEN=${BOT_1_TELEGRAM_TOKEN}
+      - PROJECT_NAME=OrphoTextCorrectorBot
+      - ASSISTANT_ID=${BOT_1_ASSISTANT_ID}
+      - VOICE_ON=true
+  bot-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ChatGPT-51Bot
+    restart: always
+    networks:
+      - home
+    environment:
+      - TELEGRAM_BOT_TOKEN=${BOT_2_TELEGRAM_TOKEN}
+      - PROJECT_NAME=ChatGPT-51Bot
+      - ASSISTANT_ID=${BOT_2_ASSISTANT_ID}
+      - VOICE_ON=true
+      - IMAGE_ON=true
+      - FILE_ON=true
+      - SAVE_CONTEXT=true
+      - FILE_MODE="VECTOR"
+  bot-3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: EmojiMasterBot
+    restart: always
+    networks:
+      - home
+    environment:
+      - TELEGRAM_BOT_TOKEN=${BOT_3_TELEGRAM_TOKEN}
+      - PROJECT_NAME=EmojiMasterBot
+      - ASSISTANT_ID=${BOT_3_ASSISTANT_ID}
+      - VOICE_ON=true
+      - FILE_ON=true
+networks:
